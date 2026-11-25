@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d47ff" />
+  <title>SoL Vietnam</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #0d47ff;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 24px;
+      padding: 28px 22px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    }
+    .screen.active {
+      display: block;
+    }
+    .logo-wrap {
+      width: 104px;
+      height: 104px;
+      margin: 0 auto 16px;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    }
+    .logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 18px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .form-group {
+      text-align: left;
+      margin-bottom: 14px;
+    }
+    label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      font-size: 0.96rem;
+      outline: none;
+    }
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.65);
+    }
+    .btn-primary {
+      margin-top: 6px;
+      width: 100%;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 14px;
+      background: #ffffff;
+      color: #0d47ff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      margin-top: 10px;
+      width: 100%;
+      padding: 11px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 14px;
+      background: transparent;
+      color: #ffffff;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .install-btn {
+      margin-top: 10px;
+      display: none;
+      width: 100%;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 14px;
+      background: #ffffff;
+      color: #0d47ff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .msg {
+      margin-top: 12px;
+      font-size: 0.88rem;
+      min-height: 20px;
+      color: #fff3a1;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      font-size: 0.84rem;
+      color: rgba(255, 255, 255, 0.88);
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: #fff3a1;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- MÀN HÌNH 1: CHÀO MỪNG / KHỞI ĐỘNG -->
+  <section class="screen active" id="splashScreen">
+    <div class="logo-wrap">
+      <img src="./icon-512.png" alt="SoL Vietnam Logo" />
+    </div>
+    <h1>SoL Vietnam</h1>
+    <p>Ứng dụng Web Progressive (PWA) đang chạy trên GitHub Pages.</p>
+    <div>
+      <span class="status-badge" id="networkStatus">Đang kiểm tra kết nối...</span>
+    </div>
+    <button class="btn-primary" id="goLoginBtn" type="button">Tiếp tục đăng nhập</button>
+    <button class="install-btn" id="installBtn" type="button">Cài đặt ứng dụng</button>
+  </section>
+
+  <!-- MÀN HÌNH 2: ĐĂNG NHẬP -->
+  <section class="screen" id="loginScreen">
+    <div class="top-bar">
+      <span>SoL Vietnam</span>
+      <button class="link-btn" id="backSplashBtn" type="button">← Màn đầu</button>
+    </div>
+    <h1>Đăng nhập</h1>
+    <p>Nhập thông tin tài khoản để vào ứng dụng.</p>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Tên đăng nhập hoặc Email</label>
+        <input type="text" id="username" placeholder="Nhập tài khoản..." required />
+      </div>
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <input type="password" id="password" placeholder="Nhập mật khẩu..." required />
+      </div>
+      <button class="btn-primary" type="submit">Đăng nhập</button>
+    </form>
+    <div class="msg" id="loginMsg"></div>
+  </section>
+
+  <!-- MÀN HÌNH 3: TRANG CHÍNH SAU KHI ĐĂNG NHẬP -->
+  <section class="screen" id="homeScreen">
+    <div class="logo-wrap">
+      <img src="./icon-192.png" alt="SoL Vietnam Icon" />
+    </div>
+    <h1>Xin chào!</h1>
+    <p id="welcomeUser">Bạn đã đăng nhập vào SoL Vietnam.</p>
+    <button class="btn-secondary" id="logoutBtn" type="button">Đăng xuất</button>
+  </section>
+
+  <script>
+    const splashScreen = document.getElementById("splashScreen");
+    const loginScreen = document.getElementById("loginScreen");
+    const homeScreen = document.getElementById("homeScreen");
+
+    const goLoginBtn = document.getElementById("goLoginBtn");
+    const backSplashBtn = document.getElementById("backSplashBtn");
+    const loginForm = document.getElementById("loginForm");
+    const loginMsg = document.getElementById("loginMsg");
+    const welcomeUser = document.getElementById("welcomeUser");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    const statusEl = document.getElementById("networkStatus");
+    const installBtn = document.getElementById("installBtn");
+    let deferredPrompt = null;
+
+    function showScreen(target) {
+      [splashScreen, loginScreen, homeScreen].forEach((el) => {
+        el.classList.remove("active");
+      });
+      target.classList.add("active");
+    }
+
+    goLoginBtn.addEventListener("click", () => {
+      loginMsg.textContent = "";
+      showScreen(loginScreen);
+    });
+
+    backSplashBtn.addEventListener("click", () => {
+      showScreen(splashScreen);
+    });
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const userVal = document.getElementById("username").value.trim();
+      const passVal = document.getElementById("password").value.trim();
+
+      if (!userVal || !passVal) {
+        loginMsg.textContent = "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.";
+        return;
+      }
+
+      localStorage.setItem("sol_logged_in_user", userVal);
+      welcomeUser.textContent = `Xin chào ${userVal}, bạn đã đăng nhập vào SoL Vietnam.`;
+      showScreen(homeScreen);
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("sol_logged_in_user");
+      document.getElementById("password").value = "";
+      loginMsg.textContent = "";
+      showScreen(loginScreen);
+    });
+
+    // Tự động chuyển sang màn hình đăng nhập sau 2 giây (nếu chưa đăng nhập)
+    window.addEventListener("load", () => {
+      const savedUser = localStorage.getItem("sol_logged_in_user");
+      if (savedUser) {
+        welcomeUser.textContent = `Xin chào ${savedUser}, bạn đã đăng nhập vào SoL Vietnam.`;
+        showScreen(homeScreen);
+      } else {
+        setTimeout(() => {
+          if (splashScreen.classList.contains("active")) {
+            showScreen(loginScreen);
+          }
+        }, 2000);
+      }
+    });
+
+    function updateNetworkStatus() {
+      statusEl.textContent = navigator.onLine ? "Trực tuyến (Online)" : "Ngoại tuyến (Offline)";
+    }
+
+    updateNetworkStatus();
+    window.addEventListener("online", updateNetworkStatus);
+    window.addEventListener("offline", updateNetworkStatus);
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+      installBtn.style.display = "block";
+    });
+
+    installBtn.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.style.display = "none";
+    });
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch((err) => {
+          console.error("Service Worker registration failed:", err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
